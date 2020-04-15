@@ -1,0 +1,73 @@
+def do_main():
+
+    global Fjugsize
+
+    Fjugsize = int(input("Fjugsizeyou want:"))
+
+    global Sjugsize
+
+   Sjugsize = int(input(" Sjugsize you want:"))
+
+    Result1 = input("result of  Fjugsize you want:")
+    Result2 = input("result Sjugsize you want:")
+    
+    startstate = (0, 0)
+
+    Rs = (int(Result1), int(Result2)) 
+    openlist = []
+    openlist.append([startstate])
+
+    print("Jug sizes: " + str(Fjugsize) + ", " + str(sjugsize))
+    print("Starting state: " + str(startstate))
+    print("Result: " + str(Rs))
+
+    while (1):
+        if len(openlist) == 0:
+            print("Null")
+            exit(0)
+        curnode = openlist.pop(0)
+
+        if curnode[-1] == gs:
+            print("Result:")
+            print(curnode)
+            exit(0)
+
+        openlist += S(curnode)
+
+def S(node):
+
+    returnlist = []
+
+    state = node[-1]
+
+    JA, JB = position
+
+    def checkState(new_state, old_state):
+
+        if new_state != old_state:
+
+            if not new_state in node:
+
+                new_node = node.copy()
+
+                new_node.append(new_state)
+
+                returnlist.append(new_node)
+
+    slist = [(JA, 0), (0, JB), (Fjugsize, JB), (JA, Sjugsize),
+
+             (JA - min(JA, Sjugsize - JB), JB + min(JA, Sjugsize - JB)),
+
+             (JA + min(JB, Fjugsize - JA), JB - min(JB, Fjugsize - JA))]
+
+    for s in slist:
+
+        checkState(s, state)
+
+    return returnlist
+
+if __name__ == "__main__":
+
+    print("Water jug result")
+
+    do_main()
