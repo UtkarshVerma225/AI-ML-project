@@ -1,0 +1,127 @@
+class LeftSide:
+    def __init__(self):
+        self.mis = 3
+        self.cal = 3
+class RightSide:
+    def __init__(self):
+        self.mis = 0
+        self.cal = 0
+class Boat:
+    def __init__(self):
+        self.inLeft = True
+        self.mis = 0
+        self.cal = 0
+class Situation:
+    def __init__(self,m_Situation,c_Situation,b_Situation):
+        self.index = -1
+        self.children = []
+        self.m_Situation = m_Situation
+        self.c_Situation = c_Situation
+        self.boat_Situation = b_Situation
+        self.isVisited = False
+        self.tot_Situation = [self.m_Situation,self.c_Situation, self.boat_Situation]
+
+
+initial_Situation,final_Situation = [[3,3,True],[0,0,True]],[[0,0,False],[3,3,False]]
+queue = [initial_Situation]
+data = []
+Situation = situation(initial_Situation[0][0], initial_Situation[0][1], initial_Situation[0][2])
+Situation.index = 0
+leftSide = LeftSide()
+rightSide = RightSide()
+boat = Boat()
+
+root_Situation = Situation
+parent_Situation = Situation
+
+Situation_queue = [parent_Situation]
+nodes = [parent_Situation]
+def set_original_value(leftSide,rightSide,boat,m,c):
+    boat.inLeft = not boat.inLeft
+    if boat.inLeft == True:
+        leftSide.mis += m
+        leftSide.cal += c
+        rightSide.mis -= m
+        rightSide.cal -= c
+    else:
+        rightSide.mis += m
+        rightSide.cal += c
+        leftSide.mis -= m
+        leftSide.cal -= c
+while True:
+    current_Situation = queue.pop(0)
+    current_parent_Situation = Situation_queue.pop(0)
+if (current_Situation[0][1] > current_Situation[0][0] and current_Situation[0][0] != 0) or (current_Situation[1][1] > current_Situation[1][0] and current_Situation[1][0] != 0):
+        continue
+    if (current_Situation == final_Situation):
+        print("Solution")
+        done = True
+        break
+    leftSide.mis,leftSide.cal = current_Situation[0][0],current_Situation[0][1]
+    rightSide.mis, rightSide.cal = current_Situation[1][0],current_Situation[1][1]
+    boat.inLeft = current_Situation[0][2]
+
+    mis_travel,cal_travel = -1 ,-1
+
+    if (boat.inLeft == True):
+        mis_travel = (2 if leftSide.mis >2 else leftSide.mis)
+        cal_travel = (2 if leftSide.cal >2 else leftSide.cal)
+    else:
+        mis_travel = (2 if rightSide.mis >2 else rightSide.mis)
+        cal_travel = (2 if rightSide.cal >2 else rightSide.cal)
+
+    for m in range(mis_travel + 1):
+        for c in range(cal_travel + 1):
+            if (m+c >2 or m+c == 0):
+                continue
+            boat.mis = m
+            boat.cal = c
+
+            if boat.inLeft == True:      # boat is in the left Side
+                leftSide.mis -= m
+                leftSide.cal -= c
+                rightSide.mis += m
+                rightSide.cal += c
+            else:                        # boat is in the right Side
+                leftSide.mis += m
+                leftSide.cal += c
+                rightSide.mis -= m
+                rightSide.cal -= c
+            boat.inLeft = not(boat.inLeft)
+            this_Situation = [[leftSide.mis, leftSide.cal, boat.inLeft],[rightSide.mis, rightSide.cal, boat.inLeft]]
+            if (this_Situation not in data):
+                if (this_Situation not in queue):
+                    queue.append(this_Situation)
+                    temp_Situation = Situation(this_Situation[0][0],this_Situation[0][1],this_Situation[0][2])
+                    temp_Situation.index = current_parent_Situation.index + 1
+                    current_parent_Situation.children.append(temp_Situation)
+                    Situation_queue.append(temp_Situation)
+                    nodes.append(temp_Situation)
+            set_original_value(leftSide,rightSide,boat,m,c)
+    data.append(current_Situation)
+stack = []
+current_node = root_Situation
+current_node.isVisited = True
+dfs_buffer = []
+tab = 0
+while True:
+    if ((current_node not in dfs_buffer) and tab >=0):
+        prefix = '      |       '
+        suffix = '      |-------'
+        if tab == 0:
+            print str(current_node.tot_Situation)
+        if tab > 0:
+            print prefix * (tab-1) + suffix + str(current_node.tot_Situation)
+    if (current_node != None):
+        if (x.isVisited == False for x in current_node.children) and len(current_node.children) > 0:
+            next_node = next(x for x in current_node.children if x.isVisited == False)
+            Situation_buffer.append(current_node)
+            stack.append(current_node)
+            next_node.isVisited = True
+            current_node = next_node
+            tab += 1
+        else:
+            current_node = stack.pop()
+            tab -= 1
+        else:
+        break
